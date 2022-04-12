@@ -1,5 +1,5 @@
 {
-  "name": "@snowplow/react-native-tracker",
+  "name": "@mediajel/react-native-tracker",
   "version": "1.2.1",
   "description": "A library for tracking Snowplow events in React Native",
   "homepage": "https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/react-native-tracker/",
@@ -36,7 +36,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/snowplow-incubator/snowplow-react-native-tracker"
+    "url": "https://github.com/MediaJel/snowplow-react-native-tracker"
   },
   "peerDependencies": {
     "react": ">=16.8.6",
