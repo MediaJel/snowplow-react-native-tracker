@@ -30,45 +30,6 @@ jobs:
     - name: Tests
       run: npm run test
 
-  # version_check:
-  #   runs-on: ubuntu-20.04
-  #   outputs:
-  #     v_tracker: ${{ steps.version.outputs.RN_TRACKER_VERSION}}
-
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v2
-
-  #   - name: Setup Node
-  #     uses: actions/setup-node@v2
-  #     with:
-  #       node-version: 14
-
-  #   - name: Get tag and tracker versions
-  #     id: version
-  #     env:
-  #       IOS_VER_FILEPATH: 'ios/Util/RNTrackerVersion.m'
-  #       ANDR_VER_FILEPATH: 'android/src/main/java/com/snowplowanalytics/react/util/TrackerVersion.java'
-  #     run: |
-  #       echo ::set-output name=TAG_VERSION::${GITHUB_REF#refs/*/}
-  #       echo "##[set-output name=RN_TRACKER_VERSION;]$(node -p "require('./package.json').version")"
-  #       echo "##[set-output name=RN_IOS_TRACKER_VERSION;]$(cat "${IOS_VER_FILEPATH}" | sed -n -e 's/^.*kRNTrackerVersion = @"rn-\(.*\)";/\1/p')"
-  #       echo "##[set-output name=RN_ANDROID_TRACKER_VERSION;]$(cat "${ANDR_VER_FILEPATH}" | sed -n -e 's/^.*RN_TRACKER_VERSION = "rn-\(.*\)";/\1/p')"
-
-  #   - name: Fail if version mismatch
-  #     run: |
-  #       if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_TRACKER_VERSION }}" ] ; then
-  #         echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project (${{ steps.version.outputs.RN_TRACKER_VERSION }})"
-  #         exit 1
-  #       fi
-  #       if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }}" ] ; then
-  #         echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(ios) (${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }})"
-  #         exit 1
-  #       fi
-  #       if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }}" ] ; then
-  #         echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(android) (${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }})"
-  #         exit 1
-  #       fi
 
   build_android:
     needs: ["test"]
@@ -175,20 +136,20 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # release:
-  #   needs: ["publish_npm", "version_check"]
-  #   runs-on: ubuntu-20.04
+  release:
+    needs: ["publish_npm", "version_check"]
+    runs-on: ubuntu-20.04
 
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  #   - name: Release
-  #     uses: softprops/action-gh-release@v0.1.7
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     with:
-  #       tag_name: ${{ github.ref }}
-  #       name: Version ${{ needs.version_check.outputs.v_tracker }}
-  #       draft: false
-  #       prerelease: ${{ contains(needs.version_check.outputs.v_tracker, '-') }}
+    - name: Release
+      uses: softprops/action-gh-release@v0.1.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        name: Version ${{ needs.version_check.outputs.v_tracker }}
+        draft: false
+        prerelease: ${{ contains(needs.version_check.outputs.v_tracker, '-') }}
