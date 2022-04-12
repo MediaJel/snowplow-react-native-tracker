@@ -1,21 +1,21 @@
 
-name: Snyk
+# name: Snyk
 
-on:
-  push:
-    branches: [ master ]
+# on:
+#   push:
+#     branches: [ master ]
 
-jobs:
-  security:
-    runs-on: ubuntu-latest
+# jobs:
+#   security:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
+#     steps:
+#     - uses: actions/checkout@v2
 
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/node@master
-      with:
-        command: monitor
-        args: --project-name=@snowplow/react-native-tracker
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+#     - name: Run Snyk to check for vulnerabilities
+#       uses: snyk/actions/node@master
+#       with:
+#         command: monitor
+#         args: --project-name=@snowplow/react-native-tracker
+#       env:
+#         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
