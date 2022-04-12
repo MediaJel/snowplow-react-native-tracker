@@ -30,48 +30,48 @@ jobs:
     - name: Tests
       run: npm run test
 
-  version_check:
-    runs-on: ubuntu-20.04
-    outputs:
-      v_tracker: ${{ steps.version.outputs.RN_TRACKER_VERSION}}
+  # version_check:
+  #   runs-on: ubuntu-20.04
+  #   outputs:
+  #     v_tracker: ${{ steps.version.outputs.RN_TRACKER_VERSION}}
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Setup Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
+  #   - name: Setup Node
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: 14
 
-    - name: Get tag and tracker versions
-      id: version
-      env:
-        IOS_VER_FILEPATH: 'ios/Util/RNTrackerVersion.m'
-        ANDR_VER_FILEPATH: 'android/src/main/java/com/snowplowanalytics/react/util/TrackerVersion.java'
-      run: |
-        echo ::set-output name=TAG_VERSION::${GITHUB_REF#refs/*/}
-        echo "##[set-output name=RN_TRACKER_VERSION;]$(node -p "require('./package.json').version")"
-        echo "##[set-output name=RN_IOS_TRACKER_VERSION;]$(cat "${IOS_VER_FILEPATH}" | sed -n -e 's/^.*kRNTrackerVersion = @"rn-\(.*\)";/\1/p')"
-        echo "##[set-output name=RN_ANDROID_TRACKER_VERSION;]$(cat "${ANDR_VER_FILEPATH}" | sed -n -e 's/^.*RN_TRACKER_VERSION = "rn-\(.*\)";/\1/p')"
+  #   - name: Get tag and tracker versions
+  #     id: version
+  #     env:
+  #       IOS_VER_FILEPATH: 'ios/Util/RNTrackerVersion.m'
+  #       ANDR_VER_FILEPATH: 'android/src/main/java/com/snowplowanalytics/react/util/TrackerVersion.java'
+  #     run: |
+  #       echo ::set-output name=TAG_VERSION::${GITHUB_REF#refs/*/}
+  #       echo "##[set-output name=RN_TRACKER_VERSION;]$(node -p "require('./package.json').version")"
+  #       echo "##[set-output name=RN_IOS_TRACKER_VERSION;]$(cat "${IOS_VER_FILEPATH}" | sed -n -e 's/^.*kRNTrackerVersion = @"rn-\(.*\)";/\1/p')"
+  #       echo "##[set-output name=RN_ANDROID_TRACKER_VERSION;]$(cat "${ANDR_VER_FILEPATH}" | sed -n -e 's/^.*RN_TRACKER_VERSION = "rn-\(.*\)";/\1/p')"
 
-    - name: Fail if version mismatch
-      run: |
-        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_TRACKER_VERSION }}" ] ; then
-          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project (${{ steps.version.outputs.RN_TRACKER_VERSION }})"
-          exit 1
-        fi
-        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }}" ] ; then
-          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(ios) (${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }})"
-          exit 1
-        fi
-        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }}" ] ; then
-          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(android) (${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }})"
-          exit 1
-        fi
+  #   - name: Fail if version mismatch
+  #     run: |
+  #       if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_TRACKER_VERSION }}" ] ; then
+  #         echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project (${{ steps.version.outputs.RN_TRACKER_VERSION }})"
+  #         exit 1
+  #       fi
+  #       if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }}" ] ; then
+  #         echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(ios) (${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }})"
+  #         exit 1
+  #       fi
+  #       if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }}" ] ; then
+  #         echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(android) (${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }})"
+  #         exit 1
+  #       fi
 
   build_android:
-    needs: ["test", "version_check"]
+    needs: ["test"]
     runs-on: ubuntu-20.04
 
     steps:
@@ -106,7 +106,7 @@ jobs:
         ./gradlew assembleDebug
 
   build_ios:
-    needs: ["test", "version_check"]
+    needs: ["test"]
     runs-on: macos-10.15
 
     steps:
@@ -147,7 +147,7 @@ jobs:
           CODE_SIGNING_ALLOWED=NO
 
   publish_npm:
-    needs: ["build_android", "build_ios", "version_check"]
+    needs: ["build_android", "build_ios"]
     runs-on: ubuntu-20.04
 
     steps:
