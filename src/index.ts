@@ -13,15 +13,15 @@
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
 
-"use strict";
+'use strict';
 
-import * as api from "./api";
-import { safeWait, safeWaitCallback, errorHandler } from "./utils";
+import * as api from './api';
+import { safeWait, safeWaitCallback, errorHandler } from './utils';
 import type {
   NetworkConfiguration,
   TrackerControllerConfiguration,
   ReactNativeTracker,
-} from "./types";
+} from './types';
 
 /**
  * Creates a React Native Tracker object
@@ -190,4 +190,4 @@ export type {
   BufferOption,
   ScreenSize,
   Trigger,
-} from "./types";
+} from './types';
