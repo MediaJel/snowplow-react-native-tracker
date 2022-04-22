@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * Copyright (c) 2020-2022 Snowplow Analytics Ltd. All rights reserved.
  *
@@ -11,15 +13,15 @@
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
 
-'use strict';
+"use strict";
 
-import * as api from './api';
-import { safeWait, safeWaitCallback, errorHandler } from './utils';
+import * as api from "./api";
+import { safeWait, safeWaitCallback, errorHandler } from "./utils";
 import type {
   NetworkConfiguration,
   TrackerControllerConfiguration,
-  ReactNativeTracker
-} from './types';
+  ReactNativeTracker,
+} from "./types";
 
 /**
  * Creates a React Native Tracker object
@@ -39,7 +41,7 @@ function createTracker(
     api.createTracker({
       namespace,
       networkConfig,
-      ...controllerConfig
+      ...controllerConfig,
     })
   );
 
@@ -50,16 +52,28 @@ function createTracker(
   const mkCallback = safeWaitCallback(initTrackerPromise, errorHandler);
 
   // track methods
-  const trackSelfDescribingEvent = mkMethod(api.trackSelfDescribingEvent(namespace));
+  const trackSelfDescribingEvent = mkMethod(
+    api.trackSelfDescribingEvent(namespace)
+  );
   const trackScreenViewEvent = mkMethod(api.trackScreenViewEvent(namespace));
   const trackStructuredEvent = mkMethod(api.trackStructuredEvent(namespace));
   const trackPageViewEvent = mkMethod(api.trackPageViewEvent(namespace));
   const trackTimingEvent = mkMethod(api.trackTimingEvent(namespace));
-  const trackConsentGrantedEvent = mkMethod(api.trackConsentGrantedEvent(namespace));
-  const trackConsentWithdrawnEvent = mkMethod(api.trackConsentWithdrawnEvent(namespace));
-  const trackEcommerceTransactionEvent = mkMethod(api.trackEcommerceTransactionEvent(namespace));
-  const trackDeepLinkReceivedEvent = mkMethod(api.trackDeepLinkReceivedEvent(namespace));
-  const trackMessageNotificationEvent = mkMethod(api.trackMessageNotificationEvent(namespace));
+  const trackConsentGrantedEvent = mkMethod(
+    api.trackConsentGrantedEvent(namespace)
+  );
+  const trackConsentWithdrawnEvent = mkMethod(
+    api.trackConsentWithdrawnEvent(namespace)
+  );
+  const trackEcommerceTransactionEvent = mkMethod(
+    api.trackEcommerceTransactionEvent(namespace)
+  );
+  const trackDeepLinkReceivedEvent = mkMethod(
+    api.trackDeepLinkReceivedEvent(namespace)
+  );
+  const trackMessageNotificationEvent = mkMethod(
+    api.trackMessageNotificationEvent(namespace)
+  );
   // Global Contexts
   const removeGlobalContexts = mkMethod(api.removeGlobalContexts(namespace));
   const addGlobalContexts = mkMethod(api.addGlobalContexts(namespace));
@@ -118,32 +132,32 @@ function createTracker(
 }
 
 /**
- * Removes a tracker given its namespace
+ * Creates a Mediajel React Native Tracker object
  *
- * @param trackerNamespace {string}
- * @returns - A boolean promise
+ * @param appId {string} - The unique app ID
+ * @returns The tracker object
  */
-function removeTracker(trackerNamespace: string): Promise<boolean> {
-  return <Promise<boolean>>api.removeTracker(trackerNamespace)
-    .catch((e) => errorHandler(e));
+
+function createMediajelTracker(appId: string): ReactNativeTracker {
+  return createTracker(
+    "react-native",
+    {
+      endpoint: "https://collector.dmp.mediajel.ninja",
+      method: "post",
+    },
+    {
+      trackerConfig: {
+        appId,
+        base64Encoding: false,
+        devicePlatform: "mob",
+        screenViewAutotracking: true,
+        installAutotracking: true,
+      },
+    }
+  );
 }
 
-/**
- * Removes all trackers
- *
- * @returns - A boolean promise
- */
-function removeAllTrackers(): Promise<boolean> {
-  return <Promise<boolean>>api.removeAllTrackers()
-    .catch((e) => errorHandler(e));
-}
-
-
-export {
-  createTracker,
-  removeTracker,
-  removeAllTrackers,
-};
+export { createMediajelTracker };
 
 export type {
   ReactNativeTracker,
@@ -175,5 +189,5 @@ export type {
   Basis,
   BufferOption,
   ScreenSize,
-  Trigger
-} from './types';
+  Trigger,
+} from "./types";
