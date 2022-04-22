@@ -136,20 +136,4 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  release:
-    needs: ["publish_npm"]
-    runs-on: ubuntu-20.04
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Release
-      uses: softprops/action-gh-release@v0.1.7
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        name: Version ${{ needs.version_check.outputs.v_tracker }}
-        draft: false
-        prerelease: ${{ contains(needs.version_check.outputs.v_tracker, '-') }}
