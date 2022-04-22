@@ -140,16 +140,16 @@ function createTracker(
 
 function createMediajelTracker(appId: string): ReactNativeTracker {
   return createTracker(
-    "react-native",
+    'react-native',
     {
-      endpoint: "https://collector.dmp.mediajel.ninja",
-      method: "post",
+      endpoint: 'https://collector.dmp.mediajel.ninja',
+      method: 'post',
     },
     {
       trackerConfig: {
         appId,
         base64Encoding: false,
-        devicePlatform: "mob",
+        devicePlatform: 'mob',
         screenViewAutotracking: true,
         installAutotracking: true,
       },
