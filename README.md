@@ -1,5 +1,5 @@
 
-# @snowplow/react-native-tracker
+# @mediajel/react-native-tracker
 
 [![actively-maintained]][tracker-classification]
 [![Build Status][gh-actions-image]][gh-actions]
@@ -27,21 +27,47 @@ With this library you can collect granular event-level data as your users intera
 From the root of your [React Native][react-native] project:
 
 ```
-npm install --save @snowplow/react-native-tracker
+npm install --save @mediajel/react-native-tracker
 npx pod-install
 ```
 
 Then, instrument the tracker in your app and start tracking events. For example:
 
 ```javascript
-import { createTracker } from '@snowplow/react-native-tracker';
+import { createTracker } from '@mediajel/react-native-tracker';
 
-const tracker = createTracker(
-    'my-namespace',
-    { endpoint: 'https://my-collector.endpoint' }
-);
+const tracker = createTracker('appId');
 
-tracker.trackScreenViewEvent({ name: 'myScreenName' });
+```
+
+### Tracking Transactions
+
+An example of using the `tracker` object above to track a transaction.
+
+```javascript
+
+
+tracker.trackEcommerceTransactionEvent({
+  orderId: "0001",
+  totalValue: 15, // Translates to $15.00
+  items: [
+    {
+      sku: "TS420",
+      name: "T-shirt",
+      category: "apparel",
+      price: 8,
+      quantity: 1,
+    },
+    {
+      sku: "TS421",
+      name: "shoes",
+      category: "footwear",
+      price: 7,
+      quantity: 1,
+    }
+  ]
+})
+
 ```
 
 The Snowplow React Native Tracker also provides first-class support for TypeScript, as it is fully typed.
