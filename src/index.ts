@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * Copyright (c) 2020-2022 Snowplow Analytics Ltd. All rights reserved.
  *
@@ -142,7 +140,7 @@ function createMediajelTracker(appId: string): ReactNativeTracker {
   return createTracker(
     'react-native',
     {
-      endpoint: 'https://collector.dmp.mediajel.ninja',
+      endpoint: 'https://collector.dmp.cnna.io',
       method: 'post',
     },
     {
