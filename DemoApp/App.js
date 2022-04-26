@@ -56,7 +56,7 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const tracker = createMediajelTracker('test-post');
+  const tracker = createMediajelTracker('ReactNativeNPM');
 
   // const prod = createTracker(
   //   'sp1',
@@ -108,13 +108,22 @@ const App = () => {
 
   const onPressTrackTransaction = () => {
     tracker.trackEcommerceTransactionEvent({
-      orderId: '0000',
-      totalValue: 10,
+      orderId: '0001',
+      totalValue: 15, // Translates to $15.00
       items: [
         {
-          sku: '123',
-          price: 5,
-          quantity: 2,
+          sku: 'TS420',
+          name: 'T-shirt',
+          category: 'apparel',
+          price: 8,
+          quantity: 1,
+        },
+        {
+          sku: 'TS421',
+          name: 'shoes',
+          category: 'footwear',
+          price: 7,
+          quantity: 1,
         },
       ],
     });
