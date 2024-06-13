@@ -6,134 +6,92 @@ on:
       - '*.*.*'
 
 jobs:
-  test:
-    runs-on: ubuntu-20.04
+
+  version_check:
+    runs-on: ubuntu-latest
+    outputs:
+      v_tracker: ${{ steps.version.outputs.RN_TRACKER_VERSION}}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - name: Setup Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-
-    - name: Install node modules
-      run: npm ci
-
-    - name: Compile TypeScript
-      run: npm run compile
-
-    - name: Lint
-      run: npm run lint
-
-    - name: Tests
-      run: npm run test
-
-
-  build_android:
-    needs: ["test"]
-    runs-on: ubuntu-20.04
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Validate Gradle Wrapper
-      uses: gradle/wrapper-validation-action@v1
-
-    - name: Setup Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-
-    - name: Build dist files
+    - name: Get tag and tracker versions
+      id: version
+      env:
+        IOS_VER_FILEPATH: 'ios/Util/TrackerVersion.swift'
+        ANDR_VER_FILEPATH: 'android/src/main/java/com/snowplow/reactnativetracker/util/TrackerVersion.kt'
+        JS_VER_FILEPATH: 'src/jsCore.ts'
       run: |
-        npm ci
-        npm run build
+        echo "TAG_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        echo "RN_TRACKER_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        echo "RN_IOS_TRACKER_VERSION=$(cat "${IOS_VER_FILEPATH}" | sed -n -e 's/^.*kRNTrackerVersion = "rn-\(.*\)"/\1/p')" >> $GITHUB_OUTPUT
+        echo "RN_ANDROID_TRACKER_VERSION=$(cat "${ANDR_VER_FILEPATH}" | sed -n -e 's/^.*RN_TRACKER_VERSION = "rn-\(.*\)"/\1/p')" >> $GITHUB_OUTPUT
+        echo "RN_JS_TRACKER_VERSION=$(cat "${JS_VER_FILEPATH}" | sed -n -e 's/^.*trackerVersion = '\''rn-\(.*\)'\'';/\1/p')" >> $GITHUB_OUTPUT
 
-    - name: Install node_modules
-      working-directory: DemoApp
+    - name: Fail if version mismatch
       run: |
-        yarn install --frozen-lockfile --network-timeout 100000
-
-    - name: Lint DemoApp
-      working-directory: DemoApp
-      run: yarn lint
-
-    - name: Build DemoApp
-      working-directory: DemoApp/android
-      run: |
-        ./gradlew assembleDebug
-
-  build_ios:
-    needs: ["test"]
-    runs-on: macos-10.15
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Setup Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-
-    - name: Build dist files
-      run: |
-        npm ci
-        npm run build
-
-    - name: Install node_modules
-      working-directory: DemoApp
-      run: |
-        yarn install --frozen-lockfile --network-timeout 100000
-
-    - name: Install Pods
-      working-directory: DemoApp/ios
-      run: |
-        pod install
-
-    - name: Build DemoApp
-      working-directory: DemoApp/ios
-      run: |
-        xcodebuild \
-          -workspace DemoApp.xcworkspace \
-          -scheme DemoApp \
-          -sdk iphonesimulator \
-          -configuration Debug \
-          -destination 'platform=iOS Simulator,name=iPhone 12' \
-          -derivedDataPath ios/build -UseModernBuildSystem=YES \
-          clean build \
-          CODE_SIGNING_ALLOWED=NO
+        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_TRACKER_VERSION }}" ] ; then
+          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project (${{ steps.version.outputs.RN_TRACKER_VERSION }})"
+          exit 1
+        fi
+        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }}" ] ; then
+          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(ios) (${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }})"
+          exit 1
+        fi
+        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }}" ] ; then
+          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(android) (${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }})"
+          exit 1
+        fi
+        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_JS_TRACKER_VERSION }}" ] ; then
+          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(js) (${{ steps.version.outputs.RN_JS_TRACKER_VERSION }})"
+          exit 1
+        fi
 
   publish_npm:
-    needs: ["build_android", "build_ios"]
-    runs-on: ubuntu-20.04
+    needs: ["version_check"]
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Setup Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-        registry-url: 'https://registry.npmjs.org'
+    - name: Setup
+      uses: ./.github/actions/setup
+
+    - name: Run unit tests
+      run: yarn test
 
     - name: Build dist files
       run: |
-        npm ci
-        npm run build
+        yarn
+        yarn prepack
 
     - name: NPM Publish
       run: |
+        echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
         if [[ "${{ needs.version_check.outputs.v_tracker }}" = *-* ]] ; then
-          npm publish --access public --tag next
+          yarn publish --access public --tag next
         else
-          npm publish --access public
+          yarn publish --access public
         fi
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  release:
+    needs: ["publish_npm", "version_check"]
+    runs-on: ubuntu-latest
 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Release
+      uses: softprops/action-gh-release@v0.1.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.workflow_run.head_branch }}
+        name: Version ${{ needs.version_check.outputs.v_tracker }}
+        draft: false
+        prerelease: ${{ contains(needs.version_check.outputs.v_tracker, '-') }}

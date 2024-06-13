@@ -1,3 +1,4 @@
+
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /*
@@ -16,13 +17,14 @@
 'use strict';
 
 import * as api from './api';
-import { safeWait, safeWaitCallback, errorHandler } from './utils';
+import { errorHandler, safeWait, safeWaitCallback } from './utils';
+import { getWebViewCallback } from './webViewInterface';
+
 import type {
   NetworkConfiguration,
   TrackerControllerConfiguration,
   ReactNativeTracker,
 } from './types';
-
 /**
  * Creates a React Native Tracker object
  *
@@ -56,6 +58,12 @@ function createTracker(
     api.trackSelfDescribingEvent(namespace)
   );
   const trackScreenViewEvent = mkMethod(api.trackScreenViewEvent(namespace));
+  const trackScrollChangedEvent = mkMethod(
+    api.trackScrollChangedEvent(namespace)
+  );
+  const trackListItemViewEvent = mkMethod(
+    api.trackListItemViewEvent(namespace)
+  );
   const trackStructuredEvent = mkMethod(api.trackStructuredEvent(namespace));
   const trackPageViewEvent = mkMethod(api.trackPageViewEvent(namespace));
   const trackTimingEvent = mkMethod(api.trackTimingEvent(namespace));
@@ -101,6 +109,8 @@ function createTracker(
   return Object.freeze({
     trackSelfDescribingEvent,
     trackScreenViewEvent,
+    trackScrollChangedEvent,
+    trackListItemViewEvent,
     trackStructuredEvent,
     trackPageViewEvent,
     trackTimingEvent,

@@ -1,16 +1,3 @@
-/*
- * Copyright (c) 2020-2022 Snowplow Analytics Ltd. All rights reserved.
- *
- * This program is licensed to you under the Apache License Version 2.0,
- * and you may not use this file except in compliance with the Apache License Version 2.0.
- * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the Apache License Version 2.0 is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
- */
-
 'use strict';
 
 import { RNSnowplowTracker } from './native';
@@ -19,6 +6,8 @@ import {
   validateContexts,
   validateSelfDesc,
   validateScreenView,
+  validateScrollChanged,
+  validateListItemView,
   validateStructured,
   validatePageView,
   validateTiming,
@@ -26,7 +15,7 @@ import {
   validateConsentWithdrawn,
   validateEcommerceTransaction,
   validateDeepLinkReceived,
-  validateMessageNotification
+  validateMessageNotification,
 } from './events';
 import type {
   SelfDescribing,
@@ -40,6 +29,8 @@ import type {
   EcommerceTransactionProps,
   DeepLinkReceivedProps,
   MessageNotificationProps,
+  ScrollChangedProps,
+  ListItemViewProps,
 } from './types';
 
 /**
@@ -51,18 +42,19 @@ import type {
  * @returns {Promise}
  */
 function trackSelfDescribingEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: SelfDescribing,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateSelfDesc(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackSelfDescribingEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts
-      }))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackSelfDescribingEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackSelfDesc} ${error.message}`);
     });
@@ -77,19 +69,75 @@ function trackSelfDescribingEvent(
  * @returns {Promise}
  */
 function trackScreenViewEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: ScreenViewProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateScreenView(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackScreenViewEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackScreenViewEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackScreenView} ${error.message}`);
+    });
+}
+
+/**
+ * Tracks a scroll-changed event
+ *
+ * @param namespace {string} - the tracker namespace
+ * @param argmap {Object} - the event data
+ * @param contexts {Array}- the event contexts
+ * @returns {Promise}
+ */
+function trackScrollChangedEvent(
+  namespace: string | null,
+  argmap: ScrollChangedProps,
+  contexts: EventContext[] = []
+): Promise<void> {
+  return <Promise<void>>validateScrollChanged(argmap)
+    .then(() => validateContexts(contexts))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackScrollChangedEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
+    .catch((error) => {
+      throw new Error(`${logMessages.trackScrollChanged} ${error.message}`);
+    });
+}
+
+/**
+ * Tracks a list item view event
+ *
+ * @param namespace {string} - the tracker namespace
+ * @param argmap {Object} - the event data
+ * @param contexts {Array}- the event contexts
+ * @returns {Promise}
+ */
+function trackListItemViewEvent(
+  namespace: string | null,
+  argmap: ListItemViewProps,
+  contexts: EventContext[] = []
+): Promise<void> {
+  return <Promise<void>>validateListItemView(argmap)
+    .then(() => validateContexts(contexts))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackListItemViewEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
+    .catch((error) => {
+      throw new Error(`${logMessages.trackListItemView} ${error.message}`);
     });
 }
 
@@ -102,17 +150,19 @@ function trackScreenViewEvent(
  * @returns {Promise}
  */
 function trackStructuredEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: StructuredProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateStructured(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackStructuredEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackStructuredEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackStructured} ${error.message}`);
     });
@@ -127,17 +177,19 @@ function trackStructuredEvent(
  * @returns {Promise}
  */
 function trackPageViewEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: PageViewProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validatePageView(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackPageViewEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackPageViewEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackPageView} ${error.message}`);
     });
@@ -152,17 +204,19 @@ function trackPageViewEvent(
  * @returns {Promise}
  */
 function trackTimingEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: TimingProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateTiming(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackTimingEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackTimingEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackTiming} ${error.message}`);
     });
@@ -177,17 +231,19 @@ function trackTimingEvent(
  * @returns {Promise}
  */
 function trackConsentGrantedEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: ConsentGrantedProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateConsentGranted(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackConsentGrantedEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackConsentGrantedEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackConsentGranted} ${error.message}`);
     });
@@ -202,17 +258,19 @@ function trackConsentGrantedEvent(
  * @returns {Promise}
  */
 function trackConsentWithdrawnEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: ConsentWithdrawnProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateConsentWithdrawn(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackConsentWithdrawnEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackConsentWithdrawnEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackConsentWithdrawn} ${error.message}`);
     });
@@ -227,19 +285,23 @@ function trackConsentWithdrawnEvent(
  * @returns {Promise}
  */
 function trackEcommerceTransactionEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: EcommerceTransactionProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateEcommerceTransaction(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackEcommerceTransactionEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackEcommerceTransactionEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
-      throw new Error(`${logMessages.trackEcommerceTransaction} ${error.message}`);
+      throw new Error(
+        `${logMessages.trackEcommerceTransaction} ${error.message}`
+      );
     });
 }
 
@@ -252,17 +314,19 @@ function trackEcommerceTransactionEvent(
  * @returns {Promise}
  */
 function trackDeepLinkReceivedEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: DeepLinkReceivedProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateDeepLinkReceived(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackDeepLinkReceivedEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackDeepLinkReceivedEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
       throw new Error(`${logMessages.trackDeepLinkReceived} ${error.message}`);
     });
@@ -277,25 +341,31 @@ function trackDeepLinkReceivedEvent(
  * @returns {Promise}
  */
 function trackMessageNotificationEvent(
-  namespace: string,
+  namespace: string | null,
   argmap: MessageNotificationProps,
   contexts: EventContext[] = []
 ): Promise<void> {
   return <Promise<void>>validateMessageNotification(argmap)
     .then(() => validateContexts(contexts))
-    .then(() =>
-      <Promise<void>>RNSnowplowTracker.trackMessageNotificationEvent({
-        tracker: namespace,
-        eventData: argmap,
-        contexts: contexts}))
+    .then(
+      () => <Promise<void>>RNSnowplowTracker.trackMessageNotificationEvent({
+          tracker: namespace,
+          eventData: argmap,
+          contexts: contexts,
+        })
+    )
     .catch((error) => {
-      throw new Error(`${logMessages.trackMessageNotification} ${error.message}`);
+      throw new Error(
+        `${logMessages.trackMessageNotification} ${error.message}`
+      );
     });
 }
 
 export {
   trackSelfDescribingEvent,
   trackScreenViewEvent,
+  trackScrollChangedEvent,
+  trackListItemViewEvent,
   trackStructuredEvent,
   trackPageViewEvent,
   trackTimingEvent,
@@ -303,5 +373,5 @@ export {
   trackConsentWithdrawnEvent,
   trackEcommerceTransactionEvent,
   trackDeepLinkReceivedEvent,
-  trackMessageNotificationEvent
+  trackMessageNotificationEvent,
 };
