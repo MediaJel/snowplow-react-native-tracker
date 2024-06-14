@@ -22,7 +22,7 @@ import { WebView } from 'react-native-webview';
 
 import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
 
-import {createMediajelTracker} from '@snowplow/react-native-tracker';
+import { createMediajelTracker } from '@mediajel/react-native-tracker';
 
 /**
  * URI of the Snowplow collector (e.g., Micro, Mini, or BDP) to send events to
@@ -182,7 +182,8 @@ const App = () => {
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
+          }}
+        >
           <Section title="Self-Describing Events">
             <Button
               onPress={onPressTrackSelfDescribingEvent}

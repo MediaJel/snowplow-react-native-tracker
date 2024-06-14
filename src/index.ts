@@ -1,24 +1,15 @@
-
-/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/*
- * Copyright (c) 2020-2022 Snowplow Analytics Ltd. All rights reserved.
- *
- * This program is licensed to you under the Apache License Version 2.0,
- * and you may not use this file except in compliance with the Apache License Version 2.0.
- * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the Apache License Version 2.0 is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
- */
 
 'use strict';
 
+import ReactNativeIdfaAaid from '@sparkfabrik/react-native-idfa-aaid';
+
 import * as api from './api';
 import { errorHandler, safeWait, safeWaitCallback } from './utils';
-import { getWebViewCallback } from './webViewInterface';
+
+import type { AdvertisingInfoResponse } from '@sparkfabrik/react-native-idfa-aaid';
+
+// import { getWebViewCallback } from './webViewInterface';
 
 import type {
   NetworkConfiguration,
@@ -148,11 +139,13 @@ function createTracker(
  * @returns The tracker object
  */
 
-function createMediajelTracker(appId: string): ReactNativeTracker {
-  return createTracker(
+async function createMediajelTracker(
+  appId: string
+): Promise<ReactNativeTracker> {
+  const tracker = createTracker(
     'react-native',
     {
-      endpoint: 'https://collector.dmp.mediajel.ninja',
+      endpoint: 'https://collector.dmp.cnna.io',
       method: 'post',
     },
     {
@@ -165,6 +158,20 @@ function createMediajelTracker(appId: string): ReactNativeTracker {
       },
     }
   );
+
+  await ReactNativeIdfaAaid.getAdvertisingInfo().then(
+    (res: AdvertisingInfoResponse) => {
+      if (res.isAdTrackingLimited) {
+        console.log(`Found ID: ${res.id}`);
+        return tracker.setUserId(res.id);
+      }
+
+      console.log('No ID available');
+      return;
+    }
+  );
+
+  return tracker;
 }
 
 export { createMediajelTracker };
