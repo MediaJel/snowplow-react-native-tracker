@@ -145,7 +145,7 @@ async function createMediajelTracker(
   const tracker = createTracker(
     'react-native',
     {
-      endpoint: 'https://collector.dmp.cnna.io',
+      endpoint: 'https://collector.dmp.mediajel.ninja',
       method: 'post',
     },
     {
@@ -161,9 +161,11 @@ async function createMediajelTracker(
 
   await ReactNativeIdfaAaid.getAdvertisingInfo().then(
     (res: AdvertisingInfoResponse) => {
-      if (res.isAdTrackingLimited) {
+      console.log(res);
+      if (!res.isAdTrackingLimited) {
         console.log(`Found ID: ${res.id}`);
-        return tracker.setUserId(res.id);
+        tracker.setUserId(res.id);
+        return;
       }
 
       console.log('No ID available');
