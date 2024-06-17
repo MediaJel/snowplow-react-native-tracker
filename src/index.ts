@@ -2,12 +2,8 @@
 
 'use strict';
 
-import ReactNativeIdfaAaid from '@sparkfabrik/react-native-idfa-aaid';
-
 import * as api from './api';
 import { errorHandler, safeWait, safeWaitCallback } from './utils';
-
-import type { AdvertisingInfoResponse } from '@sparkfabrik/react-native-idfa-aaid';
 
 // import { getWebViewCallback } from './webViewInterface';
 
@@ -156,18 +152,6 @@ async function createMediajelTracker(
         screenViewAutotracking: true,
         installAutotracking: true,
       },
-    }
-  );
-
-  await ReactNativeIdfaAaid.getAdvertisingInfo().then(
-    (res: AdvertisingInfoResponse) => {
-      if (!res.isAdTrackingLimited) {
-        console.log(`Found ID: ${res.id}`);
-        tracker.setUserId(res.id);
-        return;
-      }
-
-      return;
     }
   );
 
