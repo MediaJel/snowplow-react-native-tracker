@@ -1,6 +1,6 @@
 {
   "name": "@mediajel/react-native-tracker",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Mediajel fork of Snoplow's React native tracker",
   "homepage": "https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/react-native-tracker/",
   "main": "lib/commonjs/index",
