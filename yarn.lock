@@ -2051,11 +2051,6 @@
     tslib "^2.3.1"
     uuid "^3.4.0"
 
-"@sparkfabrik/react-native-idfa-aaid@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@sparkfabrik/react-native-idfa-aaid/-/react-native-idfa-aaid-1.1.0.tgz#db634e986ca32411a08d94d35e5ad9d06c129c37"
-  integrity sha512-3YX+fqiAnuvdTL/xF0mZegQ/qKFaUNbLqdqETD9T12zWdiTBx1hYGuoBywaRQofQLgM5wOZXGG3hbZT1E8ST3w==
-
 "@szmarczak/http-timer@^5.0.1":
   version "5.0.1"
   resolved "https://registry.npmjs.org/@szmarczak/http-timer/-/http-timer-5.0.1.tgz"

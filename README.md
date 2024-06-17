@@ -7,7 +7,7 @@ The Mediajel React Native Tracker is a React Native wrapper around the Snowplow 
 From the root of your [React Native][react-native] project:
 
 ```sh
-npm install --save @snowplow/react-native-tracker
+npm install --save @mediajel/react-native-tracker
 npx pod-install
 ```
 
@@ -18,40 +18,42 @@ pod 'FMDB', :modular_headers => true
 ```
 
 
-### iOS configuration
-
-For `native` apps, in `info.plist` make sure to add:
-
-```xml
-<key>NSUserTrackingUsageDescription</key>
-<string>...</string>
-```
-
-For `Expo` apps, in `app.json` make sure to add:
-
-```json
-{
-  "expo": {
-    "plugins": [
-      [
-        "expo-tracking-transparency",
-        {
-          "userTrackingPermission": "..."
-        }
-      ]
-    ]
-  }
-}
-```
-
-
 Then, instrument the tracker in your app and start tracking events. For example:
 
 ```javascript
 import { createMediajelTracker } from '@mediajel/react-native-tracker';
 
-const tracker = createMediajelTracker('AppIdHere'); // Replace with your App ID
+ // Replace with your App ID
+const tracker = createMediajelTracker('AppIdHere');
+```
 
+Replace with your GAID or IDFA of the user
+This is necessary for us to report on attributed transactions
+We recommend this [library](https://www.npmjs.com/package/@sparkfabrik/react-native-idfa-aaid)  if you don't already have a way of capturing the user's GAID or IDFA
+
+```javascript
+tracker.setUserId("GAID-or-IDFA-Here"); 
+```
+
+Example with the `react-native-idfa-aaid` library
+
+```javascript
+import { createMediajelTracker } from '@mediajel/react-native-tracker';
+import ReactNativeIdfaAaid, { AdvertisingInfoResponse } from '@sparkfabrik/react-native-idfa-aaid';
+
+const MyComponent: React.FC = () => {
+  const [idfa, setIdfa] = useState<string | null>();
+  const tracker = createMediajelTracker('AppIdHere');
+
+  useEffect(() => {
+    ReactNativeIdfaAaid.getAdvertisingInfo()
+      .then((res: AdvertisingInfoResponse) => !res.isAdTrackingLimited && tracker.setUserId(res.id))
+  }, []);
+}
+```
+
+Tracking a transaction event
+```javascript
   tracker.trackEcommerceTransactionEvent({
     orderId: '1234',
     totalValue: 15,

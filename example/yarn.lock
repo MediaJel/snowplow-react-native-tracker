@@ -1817,11 +1817,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sparkfabrik/react-native-idfa-aaid@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@sparkfabrik/react-native-idfa-aaid/-/react-native-idfa-aaid-1.1.1.tgz"
-  integrity sha512-XJvbJ4JnT2s7meCjjGhjrYWzzln0O5QolAYjChOmrmDMzY+gfG+Dnw1r7/msrXAJkaywKGdEhco5QCW5si/efg==
-
 "@types/babel__core@^7.1.14":
   version "7.20.1"
   resolved "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.20.1.tgz"
