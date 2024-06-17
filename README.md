@@ -52,7 +52,29 @@ import { createMediajelTracker } from '@mediajel/react-native-tracker';
 
 const tracker = createMediajelTracker('AppIdHere'); // Replace with your App ID
 
-tracker.trackScreenViewEvent({ name: 'myScreenName' });
+  tracker.trackEcommerceTransactionEvent({
+    orderId: '1234',
+    totalValue: 15,
+    items: [ecomItem],
+    affiliation: 'Womens Apparel',
+    taxValue: 1.5,
+    shipping: 2.99,
+    city: 'San Jose',
+    state: 'California',
+    country: 'USA',
+    currency: 'USD',
+    items: [
+      {
+        sku: 'DD44',
+        name: 'T-Shirt',
+        category: 'Green Medium',
+        price: 15,
+        quantity: 1,
+        currency: 'USD',
+      },
+    ],
+  });
+
 ```
 
 The Snowplow React Native Tracker also provides first-class support for TypeScript, as it is fully typed.
