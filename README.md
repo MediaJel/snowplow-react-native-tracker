@@ -82,12 +82,6 @@ The Snowplow React Native Tracker also provides first-class support for TypeScri
 
 See also our [DemoApp](example) for an example implementation.
 
-## Find out more
-
-| Technical Docs                    | Setup Guide                 |
-|-----------------------------------|-----------------------------|
-| [![i1][techdocs-image]][techdocs] | [![i2][setup-image]][setup] |
-| [Technical Docs][techdocs]        | [Setup Guide][setup]        |
 
 ## Maintainer quick start
 
