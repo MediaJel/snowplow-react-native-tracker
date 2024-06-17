@@ -4,7 +4,7 @@ The Mediajel React Native Tracker is a React Native wrapper around the Snowplow 
 
 ## Quick start
 
-From the root of your [React Native][react-native] project:
+From the root of your React Native project:
 
 ```sh
 npm install --save @mediajel/react-native-tracker
@@ -85,7 +85,7 @@ See also our [DemoApp](example) for an example implementation.
 
 ## Maintainer quick start
 
-Assuming a [react-native environment][react-native-environment] is set up, from the root of the repository:
+Assuming a react-native environment is set up, from the root of the repository:
 
 ```bash
 yarn
@@ -118,11 +118,11 @@ yarn example ios
 
 ### End-to-end tests
 
-Snowplow React-Native Tracker is being end-to-end tested using [Snowplow Micro][snowplow-micro] and [Detox][detox]. To run these tests locally:
+Snowplow React-Native Tracker is being end-to-end tested using Snowplow Micro and Detox. To run these tests locally:
 
 #### Testing
 
-1. Start your [Snowplow Micro][snowplow-micro] instance locally.
+1. Start your Snowplow Micro instance locally.
 2. Replace the `placeholder` value for the `collectorEndpoint` variable in `example/src/App.js` (use the network IP address of your computer or ngrok).
 3. Start the end-to-end tests:
    * On Android, run `yarn e2e:android`
