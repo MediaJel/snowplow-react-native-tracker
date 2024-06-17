@@ -161,14 +161,12 @@ async function createMediajelTracker(
 
   await ReactNativeIdfaAaid.getAdvertisingInfo().then(
     (res: AdvertisingInfoResponse) => {
-      console.log(res);
       if (!res.isAdTrackingLimited) {
         console.log(`Found ID: ${res.id}`);
         tracker.setUserId(res.id);
         return;
       }
 
-      console.log('No ID available');
       return;
     }
   );
