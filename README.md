@@ -17,6 +17,34 @@ In your `ios/Podfile` file (unless using Expo Go), please add the `FMDB` depende
 pod 'FMDB', :modular_headers => true
 ```
 
+
+### iOS configuration
+
+For `native` apps, in `info.plist` make sure to add:
+
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>...</string>
+```
+
+For `Expo` apps, in `app.json` make sure to add:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "..."
+        }
+      ]
+    ]
+  }
+}
+```
+
+
 Then, instrument the tracker in your app and start tracking events. For example:
 
 ```javascript
