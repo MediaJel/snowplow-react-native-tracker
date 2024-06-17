@@ -57,7 +57,6 @@ Tracking a transaction event
   tracker.trackEcommerceTransactionEvent({
     orderId: '1234',
     totalValue: 15,
-    items: [ecomItem],
     affiliation: 'Womens Apparel',
     taxValue: 1.5,
     shipping: 2.99,
