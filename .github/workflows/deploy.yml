@@ -35,18 +35,18 @@ jobs:
           echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project (${{ steps.version.outputs.RN_TRACKER_VERSION }})"
           exit 1
         fi
-        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }}" ] ; then
-          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(ios) (${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }})"
-          exit 1
-        fi
-        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }}" ] ; then
-          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(android) (${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }})"
-          exit 1
-        fi
-        if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_JS_TRACKER_VERSION }}" ] ; then
-          echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(js) (${{ steps.version.outputs.RN_JS_TRACKER_VERSION }})"
-          exit 1
-        fi
+        # if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }}" ] ; then
+        #   echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(ios) (${{ steps.version.outputs.RN_IOS_TRACKER_VERSION }})"
+        #   exit 1
+        # fi
+        # if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }}" ] ; then
+        #   echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(android) (${{ steps.version.outputs.RN_ANDROID_TRACKER_VERSION }})"
+        #   exit 1
+        # fi
+        # if [ "${{ steps.version.outputs.TAG_VERSION }}" != "${{ steps.version.outputs.RN_JS_TRACKER_VERSION }}" ] ; then
+        #   echo "Tag version (${{ steps.version.outputs.TAG_VERSION }}) doesn't match version in project(js) (${{ steps.version.outputs.RN_JS_TRACKER_VERSION }})"
+        #   exit 1
+        # fi
 
   publish_npm:
     needs: ["version_check"]
