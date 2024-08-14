@@ -14,7 +14,10 @@
 'use strict';
 
 import { RNSnowplowTracker } from './native';
+import ReactNativeIdfaAaid, { AdvertisingInfoResponse } from '@sparkfabrik/react-native-idfa-aaid';
 import { logMessages } from './constants';
+import { createTrackerInstance } from './trackerFactory';
+
 import {
   validateContexts,
   validateSelfDesc,
@@ -92,7 +95,29 @@ function trackScreenViewEvent(
       throw new Error(`${logMessages.trackScreenView} ${error.message}`);
     });
 }
+/**
+ * Initializes the tracker and sets the user ID based on IDFA/GAID.
+ *
+ * @param namespace {string} - The tracker namespace
+ * @returns - A promise that resolves when the user ID is set
+ */
+ export function initializeTrackerWithAdId(namespace: string): Promise<void> {
+  const tracker = createTrackerInstance(namespace);
 
+  return ReactNativeIdfaAaid.getAdvertisingInfo()
+    .then((adInfo: AdvertisingInfoResponse) => {
+      if (!adInfo.isAdTrackingLimited) {
+        return tracker.setUserId(adInfo.id);
+      } else {
+        console.warn(logMessages.adTrackingLimited);
+        return Promise.resolve(); // No user ID set if tracking is limited
+      }
+    })
+    .catch((error) => {
+      console.error(`${logMessages.trackerInitError}: ${error.message}`);
+      return Promise.reject(error);
+    });
+}
 /**
  * Tracks a structured event
  *

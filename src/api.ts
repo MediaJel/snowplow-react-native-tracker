@@ -45,12 +45,12 @@ import type {
  */
 function createTracker(initConfig: InitTrackerConfiguration): Promise<void> {
   return <Promise<void>>initValidate(initConfig)
+    .then(() => tracker.initializeTrackerWithAdId(initConfig.namespace))
     .then(() => <Promise<void>>RNSnowplowTracker.createTracker(initConfig))
     .catch((error) => {
       throw new Error(`${logMessages.createTracker} ${error.message}.`);
     });
 }
-
 /**
  * Removes the tracker with given namespace
  *
@@ -178,6 +178,8 @@ function trackConsentWithdrawnEvent(namespace: string) {
   };
 }
 
+
+
 /**
  * Returns a function to track an EcommerceTransaction event by a tracker
  *
@@ -189,6 +191,8 @@ function trackEcommerceTransactionEvent(namespace: string) {
     argmap: EcommerceTransactionProps,
     contexts: EventContext[] = []
   ): Promise<void> {
+
+    //argmap.orderId = 
     return tracker.trackEcommerceTransactionEvent(namespace, argmap, contexts);
   };
 }

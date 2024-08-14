@@ -73,6 +73,8 @@ const logMessages = {
   setScreenViewport: 'setScreenViewport: screenViewport can only be of ScreenSize type or null',
   setColorDepth: 'setColorDepth: colorDepth can only be a number(integer) or null',
   setSubjectData: 'setSubjectData:',
+  adTrackingLimited: 'Ad tracking is limited.',
+  trackerInitError: 'Error initializing tracker:',
 };
 
 export {
