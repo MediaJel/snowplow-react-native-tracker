@@ -80,5 +80,8 @@
         "tsconfig": "<rootDir>/tests/tsconfig.json"
       }
     }
+  },
+  "dependencies": {
+    "@sparkfabrik/react-native-idfa-aaid": "^1.2.0"
   }
 }
